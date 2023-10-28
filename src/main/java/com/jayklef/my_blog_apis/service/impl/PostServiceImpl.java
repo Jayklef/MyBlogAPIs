@@ -1,10 +1,14 @@
 package com.jayklef.my_blog_apis.service.impl;
 
 import com.jayklef.my_blog_apis.dto.PostDto;
+import com.jayklef.my_blog_apis.dto.PostResponse;
 import com.jayklef.my_blog_apis.entity.Post;
 import com.jayklef.my_blog_apis.exception.ResourceNotFoundException;
 import com.jayklef.my_blog_apis.repository.PostRepository;
 import com.jayklef.my_blog_apis.service.PostService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -41,11 +45,28 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostDto> getAllPosts(){
-       return postRepository.findAll()
+    public PostResponse getAllPosts(int pageNo, int pageSize){
+
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<Post> posts = postRepository.findAll(pageable);
+
+        // get content from page object
+
+        List<Post> postList = posts.getContent();
+                List<PostDto> content = postList
                .stream()
                .map(post -> convertToPostDto(post))
                .collect(Collectors.toList());
+
+        PostResponse postResponse = new PostResponse();
+        postResponse.setContent(content);
+        postResponse.setPageNo(posts.getNumber());
+        postResponse.setPageSize(posts.getSize());
+        postResponse.setTotalElements(posts.getTotalElements());
+        postResponse.setTotalPages(posts.getTotalPages());
+        postResponse.setLast(posts.isLast());
+
+        return postResponse;
     }
 
     private PostDto convertToPostDto(Post post) {

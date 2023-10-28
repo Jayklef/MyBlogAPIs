@@ -1,6 +1,7 @@
 package com.jayklef.my_blog_apis.controller;
 
 import com.jayklef.my_blog_apis.dto.PostDto;
+import com.jayklef.my_blog_apis.dto.PostResponse;
 import com.jayklef.my_blog_apis.service.PostService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,9 +26,11 @@ public class PostController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<PostDto>> getAllPosts(){
-        List<PostDto> posts = postService.getAllPosts();
-        return ResponseEntity.ok(posts);
+    public PostResponse getAllPosts(
+            @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize){
+        PostResponse posts = postService.getAllPosts(pageNo, pageSize);
+        return posts;
     }
 
     @GetMapping("/{id}")
