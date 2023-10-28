@@ -6,6 +6,9 @@ import com.jayklef.my_blog_apis.repository.PostRepository;
 import com.jayklef.my_blog_apis.service.PostService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class PostServiceImpl implements PostService {
 
@@ -33,5 +36,23 @@ public class PostServiceImpl implements PostService {
         postResponse.setContent(newPost.getContent());
 
         return postResponse;
+    }
+
+    @Override
+    public List<PostDto> getAllPosts(){
+       return postRepository.findAll()
+               .stream()
+               .map(post -> convertToPostDto(post))
+               .collect(Collectors.toList());
+    }
+
+    private PostDto convertToPostDto(Post post) {
+        PostDto postDto = new PostDto();
+        postDto.setId(post.getId());
+        postDto.setTitle(post.getTitle());
+        postDto.setDescription(post.getDescription());
+        postDto.setContent(postDto.getContent());
+
+        return postDto;
     }
 }
