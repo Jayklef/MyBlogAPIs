@@ -2,11 +2,13 @@ package com.jayklef.my_blog_apis.service.impl;
 
 import com.jayklef.my_blog_apis.dto.PostDto;
 import com.jayklef.my_blog_apis.entity.Post;
+import com.jayklef.my_blog_apis.exception.ResourceNotFoundException;
 import com.jayklef.my_blog_apis.repository.PostRepository;
 import com.jayklef.my_blog_apis.service.PostService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -54,5 +56,12 @@ public class PostServiceImpl implements PostService {
         postDto.setContent(postDto.getContent());
 
         return postDto;
+    }
+
+    @Override
+    public PostDto getPost(Long id){
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Post", "id", id));
+        return convertToPostDto(post);
     }
 }
