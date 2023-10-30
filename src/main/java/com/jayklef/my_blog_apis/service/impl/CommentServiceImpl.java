@@ -7,7 +7,11 @@ import com.jayklef.my_blog_apis.exception.ResourceNotFoundException;
 import com.jayklef.my_blog_apis.repository.CommentRepository;
 import com.jayklef.my_blog_apis.repository.PostRepository;
 import com.jayklef.my_blog_apis.service.CommentService;
+import org.apache.el.lang.FunctionMapperImpl;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CommentServiceImpl implements CommentService {
@@ -40,6 +44,26 @@ public class CommentServiceImpl implements CommentService {
         Comment newComment = commentRepository.save(comment);
 
         return mapToDto(newComment);
+    }
+
+    @Override
+    public List<CommentDto> getAllCommentsByPostId(Long postId) {
+
+        // To use this, explore creating a findCommentsByPostId in post repository
+      /*  Post post = postRepository.findById(postId).orElseThrow(()->
+                new ResourceNotFoundException("Post", "id", postId));
+
+        List<CommentDto> comments = post.getComments()
+                .stream()
+                .map(comment -> mapToDto(comment))
+                .collect(Collectors.toList());
+        return comments; */
+
+        List<Comment> comments = commentRepository.findAllByPostId(postId);
+        
+        return comments.stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
     }
 
     private CommentDto mapToDto(Comment comment){
