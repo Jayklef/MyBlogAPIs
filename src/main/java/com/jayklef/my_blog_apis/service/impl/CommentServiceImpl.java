@@ -9,6 +9,7 @@ import com.jayklef.my_blog_apis.repository.CommentRepository;
 import com.jayklef.my_blog_apis.repository.PostRepository;
 import com.jayklef.my_blog_apis.service.CommentService;
 import org.apache.el.lang.FunctionMapperImpl;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -21,10 +22,13 @@ public class CommentServiceImpl implements CommentService {
     private CommentRepository commentRepository;
 
     private PostRepository postRepository;
+    private ModelMapper mapper;
 
-    public CommentServiceImpl(CommentRepository commentRepository, PostRepository postRepository) {
+    public CommentServiceImpl(CommentRepository commentRepository, PostRepository postRepository,
+                              ModelMapper mapper) {
         this.commentRepository = commentRepository;
         this.postRepository = postRepository;
+        this.mapper = mapper;
     }
 
     @Override
@@ -84,21 +88,25 @@ public class CommentServiceImpl implements CommentService {
     }
 
     private CommentDto mapToDto(Comment comment){
-        CommentDto commentDto = new CommentDto();
+        CommentDto commentDto = mapper.map(comment, CommentDto.class);
+
+     /*   CommentDto commentDto = new CommentDto();
         commentDto.setId(comment.getId());
         commentDto.setName(comment.getName());
         commentDto.setEmail(comment.getEmail());
-        commentDto.setBody(comment.getBody());
+        commentDto.setBody(comment.getBody());    */
 
         return commentDto;
     }
 
     private Comment mapToEntity(CommentDto commentDto){
-        Comment comment = new Comment();
+        Comment comment = mapper.map(commentDto, Comment.class);
+
+      /*  Comment comment = new Comment();
         comment.setId(commentDto.getId());
         comment.setName(commentDto.getName());
         comment.setEmail(commentDto.getEmail());
-        comment.setBody(commentDto.getBody());
+        comment.setBody(commentDto.getBody());  */
 
         return comment;
     }

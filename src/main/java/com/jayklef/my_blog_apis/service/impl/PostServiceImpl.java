@@ -6,6 +6,7 @@ import com.jayklef.my_blog_apis.entity.Post;
 import com.jayklef.my_blog_apis.exception.ResourceNotFoundException;
 import com.jayklef.my_blog_apis.repository.PostRepository;
 import com.jayklef.my_blog_apis.service.PostService;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,8 +22,11 @@ public class PostServiceImpl implements PostService {
 
     private PostRepository postRepository;
 
-    public PostServiceImpl(PostRepository postRepository) {
+    private ModelMapper mapper;
+
+    public PostServiceImpl(PostRepository postRepository, ModelMapper mapper) {
         this.postRepository = postRepository;
+        this.mapper =mapper;
     }
 
     @Override
@@ -73,11 +77,12 @@ public class PostServiceImpl implements PostService {
     }
 
     private PostDto convertToPostDto(Post post) {
-        PostDto postDto = new PostDto();
-        postDto.setId(post.getId());
+        PostDto postDto = mapper.map(post, PostDto.class);
+
+       /* postDto.setId(post.getId());
         postDto.setTitle(post.getTitle());
         postDto.setDescription(post.getDescription());
-        postDto.setContent(post.getContent());
+        postDto.setContent(post.getContent());    */
 
         return postDto;
     }
