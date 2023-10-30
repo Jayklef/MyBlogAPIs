@@ -3,11 +3,13 @@ package com.jayklef.my_blog_apis.service.impl;
 import com.jayklef.my_blog_apis.dto.CommentDto;
 import com.jayklef.my_blog_apis.entity.Comment;
 import com.jayklef.my_blog_apis.entity.Post;
+import com.jayklef.my_blog_apis.exception.BlogAPIException;
 import com.jayklef.my_blog_apis.exception.ResourceNotFoundException;
 import com.jayklef.my_blog_apis.repository.CommentRepository;
 import com.jayklef.my_blog_apis.repository.PostRepository;
 import com.jayklef.my_blog_apis.service.CommentService;
 import org.apache.el.lang.FunctionMapperImpl;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -60,10 +62,25 @@ public class CommentServiceImpl implements CommentService {
         return comments; */
 
         List<Comment> comments = commentRepository.findAllByPostId(postId);
-        
+
         return comments.stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public CommentDto getCommentById(Long postId, Long commentId) {
+        Post post = postRepository.findById(postId).orElseThrow(()->
+                new ResourceNotFoundException("Post", "id", postId));
+
+        Comment comment = commentRepository.findById(commentId).orElseThrow(
+                ()-> new ResourceNotFoundException("Comment", "id", commentId));
+
+        if (!comment.getPost().getId().equals(post.getId())){
+            throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Comment does not belong to post");
+        }
+
+        return mapToDto(comment);
     }
 
     private CommentDto mapToDto(Comment comment){

@@ -2,6 +2,7 @@ package com.jayklef.my_blog_apis.controller;
 
 import com.jayklef.my_blog_apis.dto.CommentDto;
 import com.jayklef.my_blog_apis.service.CommentService;
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,5 +30,12 @@ public class CommentController {
     public ResponseEntity<List<CommentDto>> getAllCommentsByPostId(@PathVariable("postId") Long postId){
         List<CommentDto> comments = commentService.getAllCommentsByPostId(postId);
         return ResponseEntity.ok(comments);
+    }
+
+    @GetMapping("/posts/{postId}/comments/{commentId}")
+    public ResponseEntity<CommentDto> getCommentById(@PathVariable("postId") Long postId,
+                                                     @PathVariable("commentId") Long commentId){
+        CommentDto comment = commentService.getCommentById(postId, commentId);
+        return new ResponseEntity<>(comment, HttpStatus.OK);
     }
 }
