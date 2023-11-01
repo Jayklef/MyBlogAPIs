@@ -3,10 +3,13 @@ spring:
     url: jdbc:mysql://localhost:3306/myBlog
     username: root
     password: JY@class4579
+    driver-class-name: com.mysql.jdbc.Driver
+
 
   jpa:
     hibernate:
       ddl-auto: update
 
 
-    show-sql: true
+
+
